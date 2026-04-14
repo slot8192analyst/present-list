@@ -4,12 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>🎁 Birthday Gift Ideas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
   <style>
     /* ============ RESET & BASE ============ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'YuGothic', 'Noto Sans JP', sans-serif;
+      font-family: 'Cormorant Garamond', 'Hiragino Sans', 'YuGothic', serif;
       background: #fff;
       color: #333;
       min-height: 100vh;
@@ -52,8 +55,10 @@
     }
 
     .lock-title {
-      font-size: 1.4rem;
-      font-weight: 700;
+      font-size: 1.6rem;
+      font-weight: 600;
+      font-style: italic;
+      font-family: 'Playfair Display', serif;
       color: #222;
       margin-bottom: 6px;
       letter-spacing: 0.03em;
@@ -146,13 +151,15 @@
       z-index: 100;
     }
     .header-title {
-      font-size: 1.1rem;
-      font-weight: 700;
+      font-size: 1.25rem;
+      font-weight: 600;
+      font-style: italic;
+      font-family: 'Playfair Display', serif;
       color: #222;
       display: flex;
       align-items: center;
       gap: 8px;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.02em;
     }
     .header-title span.emoji { font-size: 1.3rem; }
 
@@ -232,8 +239,10 @@
       border: 1px solid #eee;
       border-radius: 20px;
       padding: 12px 28px;
-      font-size: 0.9rem;
+      font-size: 1rem;
+      font-style: italic;
       font-weight: 600;
+      font-family: 'Cormorant Garamond', serif;
       color: #333;
       white-space: nowrap;
       box-shadow: 0 4px 20px rgba(0,0,0,0.07);
@@ -389,8 +398,10 @@
       padding: 14px 16px 16px;
     }
     .grid-card-title {
-      font-size: 0.9rem;
-      font-weight: 700;
+      font-size: 1rem;
+      font-weight: 600;
+      font-style: italic;
+      font-family: 'Cormorant Garamond', serif;
       color: #222;
       margin-bottom: 6px;
       letter-spacing: 0.02em;
@@ -427,8 +438,10 @@
       box-shadow: 0 16px 64px rgba(0,0,0,0.12);
     }
     .lb-caption {
-      font-size: 0.95rem;
+      font-size: 1.1rem;
       font-weight: 600;
+      font-style: italic;
+      font-family: 'Cormorant Garamond', serif;
       color: #333;
       text-align: center;
       letter-spacing: 0.03em;
@@ -579,15 +592,15 @@
 <script>
 // ============ DATA (ローカル画像) ============
 const gifts = [
-  { url: "img/trim_fce_item63dfc3cc99854.jpg",  title: "プレゼント候補 1", tag: "アイテム" },
-  { url: "img/trim_fce_item6401ba7f07446.jpg",  title: "プレゼント候補 2", tag: "アイテム" },
-  { url: "img/trim_fce_item66251ea782ed4.jpg",  title: "プレゼント候補 3", tag: "アイテム" },
-  { url: "img/trim_fce_item66251f691c786.jpg",  title: "プレゼント候補 4", tag: "アイテム" },
-  { url: "img/trim_fce_item66276f2d17ec8.jpg",  title: "プレゼント候補 5", tag: "アイテム" },
-  { url: "img/trim_fce_item6937e463d376c.jpg",  title: "プレゼント候補 6", tag: "アイテム" },
-  { url: "img/-73368812_1053699_ED.webp",        title: "プレゼント候補 7", tag: "アイテム" },
-  { url: "img/https___agete.com_photo_agete_10223116156_s-10223116156_01-1.avif", title: "プレゼント候補 8", tag: "アクセサリー" },
-  { url: "img/https___agete.com_photo_agete_10234116487_zz-10234116487_08-1.avif", title: "プレゼント候補 9", tag: "アクセサリー" }
+  { url: "img/trim_fce_item63dfc3cc99854.jpg",  title: "Present No.1", tag: "Gift" },
+  { url: "img/trim_fce_item6401ba7f07446.jpg",  title: "Present No.2", tag: "Gift" },
+  { url: "img/trim_fce_item66251ea782ed4.jpg",  title: "Present No.3", tag: "Gift" },
+  { url: "img/trim_fce_item66251f691c786.jpg",  title: "Present No.4", tag: "Gift" },
+  { url: "img/trim_fce_item66276f2d17ec8.jpg",  title: "Present No.5", tag: "Gift" },
+  { url: "img/trim_fce_item6937e463d376c.jpg",  title: "Present No.6", tag: "Gift" },
+  { url: "img/-73368812_1053699_ED.webp",        title: "Present No.7", tag: "Gift" },
+  { url: "img/https___agete.com_photo_agete_10223116156_s-10223116156_01-1.avif", title: "Present No.8", tag: "Accessory" },
+  { url: "img/https___agete.com_photo_agete_10234116487_zz-10234116487_08-1.avif", title: "Present No.9", tag: "Accessory" }
 ];
 
 // ============ UTILITY ============
