@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎁 Birthday Gift Ideas</title>
+  <style>
+    /* ============ RESET & BASE ============ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'YuGothic', 'Noto Sans JP', sans-serif;
+      background: #fff;
+      color: #333;
+      min-height: 100vh;
+    }
+
+    /* ============ PASSWORD SCREEN ============ */
+    #lock-screen {
+      position: fixed; inset: 0;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.6s ease;
+    }
+    #lock-screen.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .lock-card {
+      background: #fff;
+      border-radius: 28px;
+      padding: 56px 48px 48px;
+      box-shadow: 0 8px 48px rgba(0,0,0,0.08);
+      text-align: center;
+      max-width: 380px;
+      width: 90%;
+      border: 1px solid #f0f0f0;
+      animation: floatIn 0.7s ease;
+    }
+    @keyframes floatIn {
+      from { transform: translateY(24px); opacity: 0; }
+      to   { transform: translateY(0);   opacity: 1; }
+    }
+
+    .lock-icon {
+      font-size: 2.8rem;
+      margin-bottom: 16px;
+    }
+
+    .lock-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #222;
+      margin-bottom: 6px;
+      letter-spacing: 0.03em;
+    }
+    .lock-sub {
+      font-size: 0.82rem;
+      color: #bbb;
+      margin-bottom: 36px;
+      letter-spacing: 0.04em;
+    }
+
+    .pin-row {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+    .pin-dot {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      border: 2px solid #ccc;
+      background: transparent;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .pin-dot.filled {
+      background: #222;
+      border-color: #222;
+    }
+
+    .numpad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .numpad button {
+      height: 58px;
+      border: 1px solid #ebebeb;
+      border-radius: 14px;
+      font-size: 1.4rem;
+      font-weight: 500;
+      cursor: pointer;
+      background: #fafafa;
+      color: #222;
+      transition: background 0.15s, transform 0.1s, border-color 0.15s;
+      user-select: none;
+    }
+    .numpad button:hover  { background: #f0f0f0; border-color: #ddd; }
+    .numpad button:active { transform: scale(0.94); background: #e8e8e8; }
+    .numpad .btn-del {
+      font-size: 1rem;
+      background: #fff;
+      color: #aaa;
+      border-color: #ebebeb;
+    }
+    .numpad .btn-del:hover { background: #f5f5f5; color: #666; }
+
+    .lock-error {
+      color: #e53935;
+      font-size: 0.8rem;
+      height: 18px;
+      margin-top: -8px;
+      transition: opacity 0.3s;
+      letter-spacing: 0.02em;
+    }
+
+    /* shake animation */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%       { transform: translateX(-8px); }
+      40%       { transform: translateX(8px); }
+      60%       { transform: translateX(-6px); }
+      80%       { transform: translateX(6px); }
+    }
+    .shake { animation: shake 0.4s ease; }
+
+    /* ============ MAIN APP ============ */
+    #app { display: none; min-height: 100vh; }
+    #app.show { display: block; }
+
+    /* HEADER */
+    .site-header {
+      background: #fff;
+      border-bottom: 1px solid #f0f0f0;
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky; top: 0;
+      z-index: 100;
+    }
+    .header-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #222;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.04em;
+    }
+    .header-title span.emoji { font-size: 1.3rem; }
+
+    .view-btns {
+      display: flex;
+      gap: 8px;
+    }
+    .view-btn {
+      padding: 8px 20px;
+      border-radius: 24px;
+      border: 1.5px solid #ddd;
+      background: #fff;
+      color: #666;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+      letter-spacing: 0.02em;
+    }
+    .view-btn.active {
+      background: #222;
+      color: #fff;
+      border-color: #222;
+    }
+    .view-btn:not(.active):hover {
+      background: #f5f5f5;
+      border-color: #ccc;
+    }
+    .view-btn svg {
+      width: 14px; height: 14px;
+      fill: currentColor;
+      flex-shrink: 0;
+    }
+
+    /* ============ SLIDESHOW VIEW ============ */
+    #slideshow-view {
+      position: relative;
+      width: 100%;
+      height: calc(100vh - 65px);
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute; inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.65s ease;
+      pointer-events: none;
+    }
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .slide img {
+      max-width: 72%;
+      max-height: 72vh;
+      object-fit: contain;
+      border-radius: 16px;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.10);
+      display: block;
+      background: #f8f8f8;
+    }
+
+    .slide-caption {
+      position: absolute;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,0.95);
+      border: 1px solid #eee;
+      border-radius: 20px;
+      padding: 12px 28px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #333;
+      white-space: nowrap;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+      letter-spacing: 0.03em;
+    }
+    .slide-caption .tag-badge {
+      display: inline-block;
+      background: #f0f0f0;
+      color: #888;
+      font-size: 0.72rem;
+      font-weight: 600;
+      border-radius: 10px;
+      padding: 2px 8px;
+      margin-right: 8px;
+      letter-spacing: 0.04em;
+    }
+
+    /* slide controls */
+    .slide-ctrl {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      z-index: 10;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      color: #444;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .slide-ctrl:hover {
+      background: #222;
+      color: #fff;
+      border-color: #222;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.14);
+      transform: translateY(-50%) scale(1.08);
+    }
+    .slide-ctrl.prev { left: 24px; }
+    .slide-ctrl.next { right: 24px; }
+
+    /* dots */
+    .slide-dots {
+      position: absolute;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 80%;
+    }
+    .slide-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #ddd;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+      padding: 0;
+    }
+    .slide-dot.active {
+      background: #222;
+      transform: scale(1.35);
+    }
+
+    /* auto-play button */
+    .play-btn {
+      position: absolute;
+      top: 20px; right: 20px;
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      z-index: 10;
+      transition: background 0.2s, color 0.2s;
+      color: #555;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .play-btn:hover { background: #222; color: #fff; border-color: #222; }
+
+    /* counter */
+    .slide-counter {
+      position: absolute;
+      top: 20px; left: 20px;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid #eee;
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #666;
+      letter-spacing: 0.05em;
+    }
+
+    /* ============ GRID VIEW ============ */
+    #grid-view {
+      display: none;
+      padding: 32px;
+      background: #fff;
+      min-height: calc(100vh - 65px);
+    }
+    #grid-view.show { display: block; }
+
+    .grid-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .grid-count {
+      font-size: 0.82rem;
+      color: #aaa;
+      letter-spacing: 0.04em;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .grid-card {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+      transition: transform 0.25s, box-shadow 0.25s;
+      cursor: pointer;
+      border: 1px solid #f0f0f0;
+    }
+    .grid-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 36px rgba(0,0,0,0.11);
+    }
+
+    .grid-card-img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+      background: #f5f5f5;
+    }
+
+    .grid-card-body {
+      padding: 14px 16px 16px;
+    }
+    .grid-card-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #222;
+      margin-bottom: 6px;
+      letter-spacing: 0.02em;
+    }
+    .grid-card-tag {
+      display: inline-block;
+      background: #f5f5f5;
+      color: #888;
+      font-size: 0.7rem;
+      font-weight: 600;
+      border-radius: 10px;
+      padding: 3px 10px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ============ LIGHTBOX ============ */
+    #lightbox {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(255,255,255,0.94);
+      backdrop-filter: blur(12px);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 20px;
+    }
+    #lightbox.show { display: flex; }
+    #lightbox img {
+      max-width: 86vw;
+      max-height: 78vh;
+      border-radius: 16px;
+      object-fit: contain;
+      box-shadow: 0 16px 64px rgba(0,0,0,0.12);
+    }
+    .lb-caption {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #333;
+      text-align: center;
+      letter-spacing: 0.03em;
+    }
+    .lb-tag {
+      display: inline-block;
+      background: #f0f0f0;
+      color: #888;
+      font-size: 0.72rem;
+      font-weight: 600;
+      border-radius: 10px;
+      padding: 2px 10px;
+      margin-right: 8px;
+    }
+    .lb-close {
+      position: absolute;
+      top: 20px; right: 20px;
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+      color: #555;
+    }
+    .lb-close:hover { background: #222; color: #fff; border-color: #222; }
+
+    .lb-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      z-index: 10;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, color 0.2s;
+      color: #444;
+    }
+    .lb-nav:hover { background: #222; color: #fff; border-color: #222; }
+    .lb-nav.lb-prev { left: 20px; }
+    .lb-nav.lb-next { right: 20px; }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 640px) {
+      .site-header { padding: 14px 16px; }
+      .header-title { font-size: 0.95rem; }
+      .view-btn { padding: 7px 14px; font-size: 0.75rem; }
+      #grid-view { padding: 16px; }
+      .grid-container { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .slide img { max-width: 88%; max-height: 65vh; }
+      .slide-ctrl.prev { left: 10px; }
+      .slide-ctrl.next { right: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ======= LOCK SCREEN ======= -->
+<div id="lock-screen">
+  <div class="lock-card" id="lock-card">
+    <div class="lock-icon">🎀</div>
+    <div class="lock-title">Birthday Gift Ideas</div>
+    <div class="lock-sub">4桁のパスワードを入力してください</div>
+
+    <div class="pin-row">
+      <div class="pin-dot" id="d0"></div>
+      <div class="pin-dot" id="d1"></div>
+      <div class="pin-dot" id="d2"></div>
+      <div class="pin-dot" id="d3"></div>
+    </div>
+
+    <div class="numpad">
+      <button onclick="pinPress(1)">1</button>
+      <button onclick="pinPress(2)">2</button>
+      <button onclick="pinPress(3)">3</button>
+      <button onclick="pinPress(4)">4</button>
+      <button onclick="pinPress(5)">5</button>
+      <button onclick="pinPress(6)">6</button>
+      <button onclick="pinPress(7)">7</button>
+      <button onclick="pinPress(8)">8</button>
+      <button onclick="pinPress(9)">9</button>
+      <button onclick="pinClear()" class="btn-del">C</button>
+      <button onclick="pinPress(0)">0</button>
+      <button onclick="pinDel()" class="btn-del">⌫</button>
+    </div>
+
+    <div class="lock-error" id="lock-error"></div>
+  </div>
+</div>
+
+<!-- ======= MAIN APP ======= -->
+<div id="app">
+  <header class="site-header">
+    <div class="header-title">
+      <span class="emoji">🎁</span>
+      Birthday Gift Ideas
+    </div>
+    <div class="view-btns">
+      <button class="view-btn active" id="btn-slide" onclick="setView('slide')">
+        <!-- play icon -->
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        スライドショー
+      </button>
+      <button class="view-btn" id="btn-grid" onclick="setView('grid')">
+        <!-- grid icon -->
+        <svg viewBox="0 0 24 24"><path d="M3 3h7v7H3zm0 11h7v7H3zm11-11h7v7h-7zm0 11h7v7h-7z"/></svg>
+        グリッド表示
+      </button>
+    </div>
+  </header>
+
+  <!-- SLIDESHOW -->
+  <div id="slideshow-view">
+    <div class="slide-counter" id="slide-counter">1 / 1</div>
+    <button class="play-btn" id="play-btn" onclick="togglePlay()" title="自動再生">⏸</button>
+    <button class="slide-ctrl prev" onclick="changeSlide(-1)">&#8249;</button>
+    <button class="slide-ctrl next" onclick="changeSlide(1)">&#8250;</button>
+    <div id="slides-wrap"></div>
+    <div class="slide-dots" id="slide-dots"></div>
+  </div>
+
+  <!-- GRID -->
+  <div id="grid-view">
+    <div class="grid-header">
+      <div class="grid-count" id="grid-count"></div>
+    </div>
+    <div class="grid-container" id="grid-container"></div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="closeLB()">
+  <button class="lb-nav lb-prev" onclick="event.stopPropagation(); lbNav(-1)">&#8249;</button>
+  <img id="lb-img" src="" alt="" onclick="event.stopPropagation()" />
+  <div class="lb-caption" id="lb-caption" onclick="event.stopPropagation()"></div>
+  <button class="lb-nav lb-next" onclick="event.stopPropagation(); lbNav(1)">&#8250;</button>
+  <button class="lb-close" onclick="closeLB()">✕</button>
+</div>
+
+<script>
+// ============ DATA (ローカル画像) ============
+const gifts = [
+  { url: "img/trim_fce_item63dfc3cc99854.jpg",  title: "プレゼント候補 1", tag: "アイテム" },
+  { url: "img/trim_fce_item6401ba7f07446.jpg",  title: "プレゼント候補 2", tag: "アイテム" },
+  { url: "img/trim_fce_item66251ea782ed4.jpg",  title: "プレゼント候補 3", tag: "アイテム" },
+  { url: "img/trim_fce_item66251f691c786.jpg",  title: "プレゼント候補 4", tag: "アイテム" },
+  { url: "img/trim_fce_item66276f2d17ec8.jpg",  title: "プレゼント候補 5", tag: "アイテム" },
+  { url: "img/trim_fce_item6937e463d376c.jpg",  title: "プレゼント候補 6", tag: "アイテム" },
+  { url: "img/-73368812_1053699_ED.webp",        title: "プレゼント候補 7", tag: "アイテム" },
+  { url: "img/https___agete.com_photo_agete_10223116156_s-10223116156_01-1.avif", title: "プレゼント候補 8", tag: "アクセサリー" },
+  { url: "img/https___agete.com_photo_agete_10234116487_zz-10234116487_08-1.avif", title: "プレゼント候補 9", tag: "アクセサリー" }
+];
+
+// ============ UTILITY ============
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ============ PASSWORD ============
+const PASSWORD = "0510";
+let pin = "";
+
+function pinPress(n) {
+  if (pin.length >= 4) return;
+  pin += String(n);
+  updateDots();
+  document.getElementById("lock-error").textContent = "";
+  if (pin.length === 4) {
+    setTimeout(checkPin, 180);
+  }
+}
+function pinDel() {
+  pin = pin.slice(0, -1);
+  updateDots();
+  document.getElementById("lock-error").textContent = "";
+}
+function pinClear() {
+  pin = "";
+  updateDots();
+  document.getElementById("lock-error").textContent = "";
+}
+function updateDots() {
+  for (let i = 0; i < 4; i++) {
+    document.getElementById("d" + i).classList.toggle("filled", i < pin.length);
+  }
+}
+function checkPin() {
+  if (pin === PASSWORD) {
+    const ls = document.getElementById("lock-screen");
+    ls.classList.add("hide");
+    setTimeout(() => {
+      ls.style.display = "none";
+      const app = document.getElementById("app");
+      app.classList.add("show");
+      initApp();
+    }, 600);
+  } else {
+    const card = document.getElementById("lock-card");
+    document.getElementById("lock-error").textContent = "パスワードが違います。もう一度お試しください。";
+    card.classList.remove("shake");
+    void card.offsetWidth; // reflow
+    card.classList.add("shake");
+    pin = "";
+    updateDots();
+  }
+}
+
+// keyboard support
+document.addEventListener("keydown", e => {
+  if (!document.getElementById("lock-screen").classList.contains("hide")) {
+    if (e.key >= "0" && e.key <= "9") pinPress(parseInt(e.key));
+    if (e.key === "Backspace") pinDel();
+    if (e.key === "Escape") pinClear();
+  }
+});
+
+// ============ APP ============
+let shuffled = [];
+let currentIdx = 0;
+let autoPlay = true;
+let timer = null;
+const INTERVAL = 3500;
+
+function initApp() {
+  shuffled = shuffle(gifts);
+  buildSlides();
+  buildGrid();
+  setSlide(0);
+  startAuto();
+}
+
+function buildSlides() {
+  const wrap = document.getElementById("slides-wrap");
+  const dotsEl = document.getElementById("slide-dots");
+  wrap.innerHTML = "";
+  dotsEl.innerHTML = "";
+
+  shuffled.forEach((g, i) => {
+    const slide = document.createElement("div");
+    slide.className = "slide";
+    slide.innerHTML = `
+      <img src="${g.url}" alt="${g.title}" loading="lazy" />
+      <div class="slide-caption">
+        <span class="tag-badge">${g.tag}</span>${g.title}
+      </div>
+    `;
+    wrap.appendChild(slide);
+
+    const dot = document.createElement("button");
+    dot.className = "slide-dot";
+    dot.setAttribute("aria-label", `スライド ${i+1}`);
+    dot.onclick = () => { setSlide(i); resetAuto(); };
+    dotsEl.appendChild(dot);
+  });
+}
+
+function buildGrid() {
+  const container = document.getElementById("grid-container");
+  container.innerHTML = "";
+  document.getElementById("grid-count").textContent = `${shuffled.length} 点`;
+
+  shuffled.forEach((g, i) => {
+    const card = document.createElement("div");
+    card.className = "grid-card";
+    card.onclick = () => openLB(i);
+    card.innerHTML = `
+      <img class="grid-card-img" src="${g.url}" alt="${g.title}" loading="lazy" />
+      <div class="grid-card-body">
+        <div class="grid-card-title">${g.title}</div>
+        <span class="grid-card-tag">${g.tag}</span>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function setSlide(idx) {
+  const slides = document.querySelectorAll(".slide");
+  const dots   = document.querySelectorAll(".slide-dot");
+  slides.forEach(s => s.classList.remove("active"));
+  dots.forEach(d => d.classList.remove("active"));
+  currentIdx = ((idx % shuffled.length) + shuffled.length) % shuffled.length;
+  slides[currentIdx].classList.add("active");
+  dots[currentIdx].classList.add("active");
+  document.getElementById("slide-counter").textContent = `${currentIdx + 1} / ${shuffled.length}`;
+}
+
+function changeSlide(dir) {
+  setSlide(currentIdx + dir);
+  resetAuto();
+}
+
+function startAuto() {
+  clearInterval(timer);
+  timer = setInterval(() => setSlide(currentIdx + 1), INTERVAL);
+}
+function stopAuto() {
+  clearInterval(timer);
+}
+function resetAuto() {
+  if (autoPlay) startAuto();
+}
+function togglePlay() {
+  autoPlay = !autoPlay;
+  const btn = document.getElementById("play-btn");
+  if (autoPlay) { startAuto(); btn.textContent = "⏸"; }
+  else          { stopAuto();  btn.textContent = "▶"; }
+}
+
+// ============ VIEW TOGGLE ============
+function setView(v) {
+  const ss = document.getElementById("slideshow-view");
+  const gv = document.getElementById("grid-view");
+  const bS = document.getElementById("btn-slide");
+  const bG = document.getElementById("btn-grid");
+
+  if (v === "slide") {
+    ss.style.display = "";
+    gv.classList.remove("show");
+    bS.classList.add("active");
+    bG.classList.remove("active");
+    if (autoPlay) startAuto();
+  } else {
+    ss.style.display = "none";
+    gv.classList.add("show");
+    bG.classList.add("active");
+    bS.classList.remove("active");
+    stopAuto();
+  }
+}
+
+// ============ LIGHTBOX ============
+let lbIdx = 0;
+
+function openLB(i) {
+  lbIdx = i;
+  updateLB();
+  document.getElementById("lightbox").classList.add("show");
+}
+function updateLB() {
+  const g = shuffled[lbIdx];
+  document.getElementById("lb-img").src = g.url;
+  document.getElementById("lb-img").alt = g.title;
+  document.getElementById("lb-caption").innerHTML =
+    `<span class="lb-tag">${g.tag}</span>${g.title}`;
+}
+function lbNav(dir) {
+  lbIdx = ((lbIdx + dir) % shuffled.length + shuffled.length) % shuffled.length;
+  updateLB();
+}
+function closeLB() {
+  document.getElementById("lightbox").classList.remove("show");
+}
+document.addEventListener("keydown", e => {
+  const lb = document.getElementById("lightbox");
+  if (lb.classList.contains("show")) {
+    if (e.key === "ArrowLeft")  lbNav(-1);
+    if (e.key === "ArrowRight") lbNav(1);
+    if (e.key === "Escape")     closeLB();
+  } else if (!document.getElementById("lock-screen").classList.contains("hide")) {
+    // handled above
+  } else {
+    if (e.key === "ArrowLeft")  changeSlide(-1);
+    if (e.key === "ArrowRight") changeSlide(1);
+  }
+});
+</script>
+</body>
+</html>
