@@ -173,14 +173,16 @@
       border: 1.5px solid #ddd;
       background: #fff;
       color: #666;
-      font-size: 0.82rem;
+      font-size: 1rem;
       font-weight: 600;
+      font-style: italic;
+      font-family: 'Cormorant Garamond', serif;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 6px;
       transition: all 0.2s;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.04em;
     }
     .view-btn.active {
       background: #222;
@@ -551,12 +553,12 @@
       <button class="view-btn active" id="btn-slide" onclick="setView('slide')">
         <!-- play icon -->
         <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        スライドショー
+        Slideshow
       </button>
       <button class="view-btn" id="btn-grid" onclick="setView('grid')">
         <!-- grid icon -->
         <svg viewBox="0 0 24 24"><path d="M3 3h7v7H3zm0 11h7v7H3zm11-11h7v7h-7zm0 11h7v7h-7z"/></svg>
-        グリッド表示
+        Grid View
       </button>
     </div>
   </header>
@@ -714,7 +716,7 @@ function buildSlides() {
 function buildGrid() {
   const container = document.getElementById("grid-container");
   container.innerHTML = "";
-  document.getElementById("grid-count").textContent = `${shuffled.length} 点`;
+  document.getElementById("grid-count").textContent = `${shuffled.length} items`;
 
   shuffled.forEach((g, i) => {
     const card = document.createElement("div");
